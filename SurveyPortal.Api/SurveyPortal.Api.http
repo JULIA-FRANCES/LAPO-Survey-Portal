@@ -1,0 +1,41 @@
+
+### List all departments
+GET http://localhost:5046/departments
+
+###
+
+### List all questions
+GET http://localhost:5046/questions
+
+###
+
+### Get the active evaluation cycle
+GET http://localhost:5046/evaluation-cycles/active
+
+### Submit a rating 
+POST http://localhost:5046/submissions
+Content-Type: application/json
+
+{
+  "evaluationCycleId": 1,
+  "unitRatings": [
+    {
+      "unitId": 1,
+      "favourableFeedback": "Great communication",
+      "correctiveFeedback": "Could be faster",
+      "answers": [ { "questionId": 1, "score": 4 }, { "questionId": 2, "score": 5 } ]
+    },
+    {
+      "unitId": 2,
+      "favourableFeedback": "Very organized",
+      "correctiveFeedback": "Nothing to add",
+      "answers": [ { "questionId": 1, "score": 5 }, { "questionId": 2, "score": 4 } ]
+    }
+  ]
+}
+
+### View all submissions
+GET http://localhost:5046/submissions
+
+### Get one department's detail, with per-unit completion status
+GET http://localhost:5046/departments/1?evaluationCycleId=1
