@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SurveyPortal.Api.Dtos;
 using SurveyPortal.Api.Models;
 using SurveyPortal.Api.Repositories.Interface;
@@ -27,6 +28,14 @@ public class SubmissionsController(
         if (!isAssigned)
         {
             return BadRequest("This department is not in scope for the rater in this survey.");
+        }
+
+        // POST /submissions is create-only (not an upsert), so reject up front
+        // if this rater already has a submission for this survey/department —
+        // they should use the get-or-create endpoint to resume it instead.
+        if (await submissions.ExistsAsync(newSubmission.SurveyId, newSubmission.RaterId, newSubmission.DepartmentId))
+        {
+            return Conflict("A submission already exists for this rater, department, and survey.");
         }
 
         var now = DateTime.UtcNow;
@@ -59,7 +68,16 @@ public class SubmissionsController(
             });
         }
 
-        await submissions.AddAsync(submission);
+        try
+        {
+            await submissions.AddAsync(submission);
+        }
+        catch (DbUpdateException)
+        {
+            // Safety net for the rare race where two requests both pass the
+            // ExistsAsync check above before either one saves.
+            return Conflict("A submission already exists for this rater, department, and survey.");
+        }
 
         return CreatedAtAction(nameof(Create), new { id = submission.Id }, submission.Id);
     }

@@ -7,6 +7,10 @@ namespace SurveyPortal.Api.Repositories;
 
 public class SubmissionRepository(SurveyPortalContext dbContext) : ISubmissionRepository
 {
+    public Task<bool> ExistsAsync(int surveyId, int raterId, int departmentId) =>
+        dbContext.Submissions.AnyAsync(s =>
+            s.SurveyId == surveyId && s.RaterId == raterId && s.DepartmentId == departmentId);
+
     public async Task<Submission> GetOrCreateAsync(int surveyId, int raterId, int departmentId)
     {
         var submission = await dbContext.Submissions.FirstOrDefaultAsync(s =>

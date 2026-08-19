@@ -9,7 +9,7 @@ namespace SurveyPortal.Api.Repositories;
 public class DepartmentRepository(SurveyPortalContext dbContext) : IDepartmentRepository
 {
     public Task<List<Department>> GetAllAsync() =>
-        dbContext.Departments.AsNoTracking().ToListAsync();
+        dbContext.Departments.Include(d => d.Units).AsNoTracking().ToListAsync();
 
     public Task<DepartmentDetailDto?> GetDetailAsync(int departmentId, int surveyId, int raterId) =>
         dbContext.Departments

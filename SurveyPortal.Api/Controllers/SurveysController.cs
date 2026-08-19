@@ -71,11 +71,13 @@ public class SurveysController(
         return Ok(rated.Select(d => new DepartmentDto(d.Id, d.Name, d.Units.Count)).ToList());
     }
 
+    // Raters only ever see published questions. Pass includeInactive=true for
+    // an admin/management view that also shows drafts not yet visible to raters.
     [HttpGet("{surveyId:int}/questions")]
-    public async Task<ActionResult<List<QuestionDto>>> GetQuestions(int surveyId)
+    public async Task<ActionResult<List<QuestionDto>>> GetQuestions(int surveyId, bool includeInactive = false)
     {
-        var list = await questions.GetBySurveyAsync(surveyId);
-        return Ok(list.Select(q => new QuestionDto(q.Id, q.Text, q.SortOrder)).ToList());
+        var list = await questions.GetBySurveyAsync(surveyId, includeInactive);
+        return Ok(list.Select(q => new QuestionDto(q.Id, q.Text, q.SortOrder, q.IsActive)).ToList());
     }
 
     [HttpPost("{surveyId:int}/questions")]
@@ -93,13 +95,28 @@ public class SurveysController(
         {
             SurveyId = surveyId,
             Text = newQuestion.Text,
-            SortOrder = sortOrder
+            SortOrder = sortOrder,
+            IsActive = newQuestion.IsActive
         };
 
         await questions.AddAsync(question);
 
-        var dto = new QuestionDto(question.Id, question.Text, question.SortOrder);
+        var dto = new QuestionDto(question.Id, question.Text, question.SortOrder, question.IsActive);
         return CreatedAtAction(nameof(GetQuestions), new { surveyId }, dto);
+    }
+
+    // Publishes or unpublishes a question — this is how a question added ahead
+    // of time (IsActive: false) becomes visible to raters.
+    [HttpPatch("{surveyId:int}/questions/{questionId:int}/active")]
+    public async Task<IActionResult> SetQuestionActive(int surveyId, int questionId, SetQuestionActiveDto request)
+    {
+        var question = await questions.SetActiveAsync(surveyId, questionId, request.IsActive);
+        if (question is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(new QuestionDto(question.Id, question.Text, question.SortOrder, question.IsActive));
     }
 
     // Upserts on the (survey_id, rater_id, department_id) unique constraint:

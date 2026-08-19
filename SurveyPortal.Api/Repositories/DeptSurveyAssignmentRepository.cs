@@ -8,10 +8,13 @@ namespace SurveyPortal.Api.Repositories;
 public class DeptSurveyAssignmentRepository(SurveyPortalContext dbContext) : IDeptSurveyAssignmentRepository
 {
     public Task<List<Department>> GetRatedDepartmentsAsync(int surveyId, int raterDepartmentId) =>
-        dbContext.DeptSurveyAssignments.AsNoTracking()
+        dbContext.DeptSurveyAssignments
+            .Include(a => a.RatedDepartment!)
+                .ThenInclude(d => d.Units)
             .Where(a => a.SurveyId == surveyId && a.RaterDepartmentId == raterDepartmentId)
             .Select(a => a.RatedDepartment!)
             .Distinct()
+            .AsNoTracking()
             .ToListAsync();
 
     public Task<bool> IsAssignedAsync(int surveyId, int raterDepartmentId, int ratedDepartmentId) =>
