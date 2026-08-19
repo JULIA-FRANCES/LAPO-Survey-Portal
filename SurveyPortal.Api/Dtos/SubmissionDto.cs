@@ -1,6 +1,6 @@
 namespace SurveyPortal.Api.Dtos;
 
-public record AnswerDto(int QuestionId, string QuestionText, int Score);
+public record AnswerDto(int QuestionId, string QuestionText, int Rating);
 
 public record UnitRatingDto(
     int UnitId,
@@ -11,6 +11,9 @@ public record UnitRatingDto(
 
 public record SubmissionDto(
     int Id,
-    int EvaluationCycleId,
-    DateTime SubmittedAt,
+    int SurveyId,
+    int RaterId,
+    int DepartmentId,
+    DateTime CreatedAt,
+    DateTime? SubmittedAt,
     List<UnitRatingDto> UnitRatings);

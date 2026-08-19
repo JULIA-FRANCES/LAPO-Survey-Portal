@@ -1,6 +1,6 @@
 namespace SurveyPortal.Api.Models;
 
-public class Feedback
+public class UnitFeedback
 {
     public int Id { get; set; }
 

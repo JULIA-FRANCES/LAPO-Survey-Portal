@@ -1,3 +1,3 @@
 namespace SurveyPortal.Api.Dtos;
 
-public record QuestionDto(int Id, string Text, int DisplayOrder);
+public record QuestionDto(int Id, string Text, int SortOrder);

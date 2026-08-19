@@ -7,5 +7,7 @@ public class Unit
 
     public int DepartmentId { get; set; }
     public Department? Department { get; set; }
-    public List<Submission> Submissions { get; set; } = [];
+
+    public List<User> Users { get; set; } = [];
+    public List<Answer> Answers { get; set; } = [];
 }

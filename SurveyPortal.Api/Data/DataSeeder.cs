@@ -25,35 +25,41 @@ public static class DataSeeder
 
         db.Departments.AddRange(risk, finance);
 
-        db.Questions.AddRange(
-            new Question { Text = "How effectively does this department communicate with your team (clarity, timeliness, and appropriateness of information shared)?", DisplayOrder = 1 },
-            new Question { Text = "How promptly does this department respond to your requests, queries, and escalations?", DisplayOrder = 2 },
-            new Question { Text = "How would you rate the professionalism, courteousness, and overall attitude of staff in this department?", DisplayOrder = 3 },
-            new Question { Text = "How knowledgeable and competent is this department's staff in their area of expertise?", DisplayOrder = 4 },
-            new Question { Text = "How would you rate the overall quality and reliability of services delivered by this department?", DisplayOrder = 5 },
-            new Question { Text = "How well does this department collaborate with your team to achieve shared organisational goals?", DisplayOrder = 6 },
-            new Question { Text = "How consistently does this department meet agreed timelines and deliver on commitments?", DisplayOrder = 7 },
-            new Question { Text = "How effectively does this department resolve issues, disputes, or complaints raised by your team?", DisplayOrder = 8 }
-        );
-
-        db.EvaluationCycles.Add(new EvaluationCycle
+        var survey = new Survey
         {
             Name = "Q3 2026",
             StartDate = DateOnly.FromDateTime(DateTime.Today),
-            EndDate = DateOnly.FromDateTime(DateTime.Today.AddDays(30)),
-            IsActive = true,
-            MinDepartmentsRequired = 5
-        });
+            EndDate = DateOnly.FromDateTime(DateTime.Today.AddDays(30))
+        };
+
+        survey.Questions.AddRange(
+        [
+            new Question { Text = "How effectively does this department communicate with your team (clarity, timeliness, and appropriateness of information shared)?", SortOrder = 1 },
+            new Question { Text = "How promptly does this department respond to your requests, queries, and escalations?", SortOrder = 2 },
+            new Question { Text = "How would you rate the professionalism, courteousness, and overall attitude of staff in this department?", SortOrder = 3 },
+            new Question { Text = "How knowledgeable and competent is this department's staff in their area of expertise?", SortOrder = 4 },
+            new Question { Text = "How would you rate the overall quality and reliability of services delivered by this department?", SortOrder = 5 },
+            new Question { Text = "How well does this department collaborate with your team to achieve shared organisational goals?", SortOrder = 6 },
+            new Question { Text = "How consistently does this department meet agreed timelines and deliver on commitments?", SortOrder = 7 },
+            new Question { Text = "How effectively does this department resolve issues, disputes, or complaints raised by your team?", SortOrder = 8 }
+        ]);
+
+        db.Surveys.Add(survey);
 
         db.SaveChanges();
 
-        db.Staff.Add(new Staff
+        // Each department rates the other in this survey.
+        db.DeptSurveyAssignments.AddRange(
+            new DeptSurveyAssignment { SurveyId = survey.Id, RaterDepartmentId = finance.Id, RatedDepartmentId = risk.Id },
+            new DeptSurveyAssignment { SurveyId = survey.Id, RaterDepartmentId = risk.Id, RatedDepartmentId = finance.Id }
+        );
+
+        db.Users.Add(new User
         {
             StaffId = "SN19876",
             Name = "Oluwaseun Adeyemi",
             Email = "oluwaseun.adeyemi@lapo-nigeria.org",
             Location = "Head Office Lagos",
-            DepartmentId = finance.Id,
             UnitId = finance.Units.First().Id
         });
 
