@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: lapo-survey-portal-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+    disk:
+      name: survey-portal-data
+      mountPath: /app/data
+      sizeGB: 1
