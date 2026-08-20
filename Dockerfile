@@ -14,6 +14,7 @@ RUN mkdir /app/data
 COPY --from=build /app/publish .
 
 ENV ASPNETCORE_ENVIRONMENT=Production
+ENV DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE=false
 ENV ConnectionStrings__SurveyPortalDb="Data Source=/app/data/SurveyPortal.db"
 EXPOSE 10000
 ENTRYPOINT ["dotnet", "SurveyPortal.Api.dll"]
