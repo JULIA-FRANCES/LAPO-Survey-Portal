@@ -16,15 +16,86 @@ public static class DataSeeder
 
         var risk = new Department { Name = "Enterprise Risk Management" };
         var finance = new Department { Name = "Finance" };
+        var tech = new Department { Name = "Information Technology" };
+        var hr = new Department { Name = "Human Resources" };
+        var marketing = new Department { Name = "Marketing" };
+        var operations = new Department { Name = "Operations" };
+        var customerSuccess = new Department { Name = "Customer Success" };
+        var executive = new Department { Name = "Executive Leadership" };
+        var qa = new Department { Name = "Quality Assurance" };
+        var procurement = new Department { Name = "Procurement" };
+        var sales = new Department { Name = "Sales" };
+        var product = new Department { Name = "Product" };
+        var legal = new Department { Name = "Legal & Compliance" };
+        var rnd = new Department { Name = "Research & Development" };
 
         risk.Units.Add(new Unit { Name = "BCMS Manager" });
         risk.Units.Add(new Unit { Name = "Internal Control" });
         risk.Units.Add(new Unit { Name = "Risk Management" });
 
         finance.Units.Add(new Unit { Name = "Accounts and Reporting" });
+        finance.Units.Add(new Unit { Name = "Banking & Treasury Operations" });
+        finance.Units.Add(new Unit { Name = "Accounts Payable & Receivable" });
+        finance.Units.Add(new Unit { Name = "Financial Planning & Analysis (FP&A)" });
+        finance.Units.Add(new Unit { Name = "Payroll & Tax" });
 
-        db.Departments.AddRange(risk, finance);
+        tech.Units.Add(new Unit { Name = "Cybersecurity & Compliance" });
+        tech.Units.Add(new Unit { Name = "Software Engineering" });
+        tech.Units.Add(new Unit { Name = "IT Support & Helpdesk" });
+        tech.Units.Add(new Unit { Name = "DevOps & Cloud Infrastructure" });
 
+        hr.Units.Add(new Unit { Name = "Talent Acquisition & Recruitment" });
+        hr.Units.Add(new Unit { Name = "Employee Relations & Culture" });
+        hr.Units.Add(new Unit { Name = "Compensation & Benefits" });
+        hr.Units.Add(new Unit { Name = "Learning & Development (L&D)" });
+
+       
+        marketing.Units.Add(new Unit { Name = "Digital Marketing & Growth" });
+        marketing.Units.Add(new Unit { Name = "Content & Communications" });
+        marketing.Units.Add(new Unit { Name = "Brand Strategy" });
+
+        
+        operations.Units.Add(new Unit { Name = "Facilities & Workplace Management" });
+        operations.Units.Add(new Unit { Name = "Supply Chain & Logistics" });
+        operations.Units.Add(new Unit { Name = "Business Process Improvement" });
+
+        customerSuccess.Units.Add(new Unit { Name = "Customer Experience & Support" });
+        customerSuccess.Units.Add(new Unit { Name = "Account Management" });
+
+       
+        sales.Units.Add(new Unit { Name = "Enterprise Sales" });
+        sales.Units.Add(new Unit { Name = "Channel Partners" });
+        sales.Units.Add(new Unit { Name = "Inside Sales" });
+
+       
+        product.Units.Add(new Unit { Name = "Product Management" });
+        product.Units.Add(new Unit { Name = "User Research & Design" });
+
+        
+        legal.Units.Add(new Unit { Name = "Corporate Legal" });
+        legal.Units.Add(new Unit { Name = "Regulatory Compliance" });
+
+       
+        rnd.Units.Add(new Unit { Name = "Product Innovation" });
+        rnd.Units.Add(new Unit { Name = "Technology Research" });
+
+       
+        procurement.Units.Add(new Unit { Name = "Strategic Sourcing" });
+        procurement.Units.Add(new Unit { Name = "Vendor Management" });
+
+        
+        qa.Units.Add(new Unit { Name = "Quality Control" });
+        qa.Units.Add(new Unit { Name = "Process Improvement" });
+
+        
+        executive.Units.Add(new Unit { Name = "Strategy & Planning" });
+        executive.Units.Add(new Unit { Name = "Corporate Affairs" });
+
+        db.Departments.AddRange(
+            risk, finance, tech, hr,
+            marketing, operations, customerSuccess, sales, product,
+            legal, rnd, procurement, qa, executive
+        );
         var survey = new Survey
         {
             Name = "Q3 2026",
