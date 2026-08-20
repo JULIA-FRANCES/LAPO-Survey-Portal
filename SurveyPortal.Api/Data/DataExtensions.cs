@@ -7,7 +7,8 @@ public static class DataExtensions
 {
     public static void AddSurveyPortalDb(this WebApplicationBuilder builder)
     {
-        var connString = "Data Source=SurveyPortal.db";
+        var connString = builder.Configuration.GetConnectionString("SurveyPortalDb")
+            ?? "Data Source=SurveyPortal.db";
         builder.Services.AddSqlite<SurveyPortalContext>(connString);
     }
 

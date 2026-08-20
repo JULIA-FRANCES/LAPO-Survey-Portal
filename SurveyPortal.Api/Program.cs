@@ -4,6 +4,12 @@ using SurveyPortal.Api.Repositories.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var port = Environment.GetEnvironmentVariable("PORT");
+if (!string.IsNullOrWhiteSpace(port))
+{
+    builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+}
+
 builder.AddSurveyPortalDb();
 
 builder.Services.AddControllers();
@@ -29,9 +35,13 @@ app.UseSwaggerUI(options =>
     );
 });
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsProduction())
+{
+    app.UseHttpsRedirection();
+}
 
 app.MapControllers();
+app.MapGet("/health", () => Results.Ok());
 
 app.MigrateDb();
 app.SeedData();
