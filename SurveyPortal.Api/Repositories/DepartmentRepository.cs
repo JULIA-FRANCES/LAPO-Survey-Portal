@@ -8,8 +8,22 @@ namespace SurveyPortal.Api.Repositories;
 
 public class DepartmentRepository(SurveyPortalContext dbContext) : IDepartmentRepository
 {
-    public Task<List<Department>> GetAllAsync() =>
-        dbContext.Departments.Include(d => d.Units).AsNoTracking().ToListAsync();
+    public Task<List<DepartmentDto>> GetAllAsync(int surveyId, int raterId) =>
+    dbContext.Departments
+        .AsNoTracking()
+        .OrderBy(department => department.Name)
+        .Select(department => new DepartmentDto(
+            department.Id,
+            department.Name,
+            department.Units.Count,
+            dbContext.Submissions.Any(submission =>
+                submission.SurveyId == surveyId &&
+                submission.RaterId == raterId &&
+                submission.DepartmentId == department.Id &&
+                submission.SubmittedAt != null)
+        ))
+        .ToListAsync();
+
 
     public Task<DepartmentDetailDto?> GetDetailAsync(int departmentId, int surveyId, int raterId) =>
         dbContext.Departments

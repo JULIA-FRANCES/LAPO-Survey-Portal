@@ -5,7 +5,7 @@ namespace SurveyPortal.Api.Repositories.Interface;
 
 public interface IDepartmentRepository
 {
-    Task<List<Department>> GetAllAsync();
+    Task<List<DepartmentDto>> GetAllAsync(int surveyId, int raterId);
 
     // This one returns a DTO instead of a model: the "is this unit completed"
     // flag is computed per-rater and doesn't belong on the Department entity,

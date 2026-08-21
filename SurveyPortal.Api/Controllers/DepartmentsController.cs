@@ -9,10 +9,10 @@ namespace SurveyPortal.Api.Controllers;
 public class DepartmentsController(IDepartmentRepository departments) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<List<DepartmentDto>>> GetAll()
+    public async Task<ActionResult<List<DepartmentDto>>> GetAll(int surveyId, int raterId)
     {
-        var all = await departments.GetAllAsync();
-        return Ok(all.Select(d => new DepartmentDto(d.Id, d.Name, d.Units.Count)).ToList());
+        var all = await departments.GetAllAsync(surveyId, raterId);
+        return Ok(all);
     }
 
     // Unit completion is scoped to the rater's own submissions for this survey.
