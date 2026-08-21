@@ -47,6 +47,9 @@ Content-Type: application/json
   "isActive": true
 }
 
+### Delete a question (it is hidden from raters; existing answers are preserved)
+DELETE {{baseUrl}}/surveys/1/questions/9
+
 ### Include draft questions as well
 GET {{baseUrl}}/surveys/1/questions?includeInactive=true
 

@@ -2,6 +2,12 @@ using SurveyPortal.Api.Models;
 
 namespace SurveyPortal.Api.Repositories.Interface;
 
+public enum DeleteQuestionResult
+{
+    Deleted,
+    NotFound
+}
+
 public interface IQuestionRepository
 {
     // includeInactive = true is for admin/management views; raters filling
@@ -10,4 +16,5 @@ public interface IQuestionRepository
     Task<int?> GetMaxSortOrderAsync(int surveyId);
     Task AddAsync(Question question);
     Task<Question?> SetActiveAsync(int surveyId, int questionId, bool isActive);
+    Task<DeleteQuestionResult> DeleteAsync(int surveyId, int questionId);
 }

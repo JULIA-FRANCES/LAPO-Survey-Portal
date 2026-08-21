@@ -42,4 +42,19 @@ public class QuestionRepository(SurveyPortalContext dbContext) : IQuestionReposi
         await dbContext.SaveChangesAsync();
         return question;
     }
+
+    public async Task<DeleteQuestionResult> DeleteAsync(int surveyId, int questionId)
+    {
+        var question = await dbContext.Questions
+            .FirstOrDefaultAsync(q => q.Id == questionId && q.SurveyId == surveyId);
+
+        if (question is null)
+        {
+            return DeleteQuestionResult.NotFound;
+        }
+
+        question.IsActive = false;
+        await dbContext.SaveChangesAsync();
+        return DeleteQuestionResult.Deleted;
+    }
 }

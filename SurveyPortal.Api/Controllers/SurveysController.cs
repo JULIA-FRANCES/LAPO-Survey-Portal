@@ -110,6 +110,18 @@ public class SurveysController(
         return Ok(new QuestionDto(question.Id, question.Text, question.SortOrder, question.IsActive));
     }
 
+    [HttpDelete("{surveyId:int}/questions/{questionId:int}")]
+    public async Task<IActionResult> DeleteQuestion(int surveyId, int questionId)
+    {
+        var result = await questions.DeleteAsync(surveyId, questionId);
+
+        return result switch
+        {
+            DeleteQuestionResult.NotFound => NotFound(),
+            _ => NoContent()
+        };
+    }
+
     // Upserts on the (survey_id, rater_id, department_id) unique constraint:
     // returns the rater's existing submission for this survey/department if
     // one already exists (draft or submitted), otherwise starts a new draft.
