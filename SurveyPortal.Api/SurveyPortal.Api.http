@@ -3,8 +3,9 @@
 
 # Seeded data on a fresh database:
 # surveyId: 1 (Q3 2026), raterId: 1 (Oluwaseun Adeyemi, Finance)
-# Finance is assigned to rate Enterprise Risk Management (departmentId: 1).
+# Finance can rate every department except Finance itself.
 # Enterprise Risk Management unit IDs: 1 (BCMS Manager), 2 (Internal Control), 3 (Risk Management).
+# Customer Success unit IDs: 23 (Customer Experience & Support), 24 (Account Management).
 # Seeded question IDs: 1 through 8.
 
 ### List surveys
@@ -59,7 +60,7 @@ GET {{baseUrl}}/departments?surveyId=1&raterId=1
 ### Enterprise Risk Management, including unit completion status
 GET {{baseUrl}}/departments/1?surveyId=1&raterId=1
 
-### Submit a complete rating for Enterprise Risk Management
+### Submit a complete rating for Customer Success
 # Run this once on a fresh database. Re-running returns 409 because a submission already exists.
 POST {{baseUrl}}/submissions
 Content-Type: application/json
@@ -67,11 +68,11 @@ Content-Type: application/json
 {
   "surveyId": 1,
   "raterId": 1,
-  "departmentId": 1,
+  "departmentId": 7,
   "unitRatings": [
     {
-      "unitId": 1,
-      "favourableFeedback": "The BCMS Manager communicates requirements clearly and promptly.",
+      "unitId": 23,
+      "favourableFeedback": "Customer Experience and Support communicates requirements clearly and promptly.",
       "correctiveFeedback": "Share review timelines earlier in the quarter.",
       "answers": [
         { "questionId": 1, "rating": 5 }, { "questionId": 2, "rating": 4 },
@@ -81,8 +82,8 @@ Content-Type: application/json
       ]
     },
     {
-      "unitId": 2,
-      "favourableFeedback": "Internal Control provides practical and well-documented guidance.",
+      "unitId": 24,
+      "favourableFeedback": "Account Management provides practical and well-documented guidance.",
       "correctiveFeedback": "Provide a single tracker for open action items.",
       "answers": [
         { "questionId": 1, "rating": 4 }, { "questionId": 2, "rating": 4 },
@@ -90,23 +91,12 @@ Content-Type: application/json
         { "questionId": 5, "rating": 4 }, { "questionId": 6, "rating": 5 },
         { "questionId": 7, "rating": 4 }, { "questionId": 8, "rating": 4 }
       ]
-    },
-    {
-      "unitId": 3,
-      "favourableFeedback": "Risk Management gives timely support during operational reviews.",
-      "correctiveFeedback": "Offer more short training sessions for new processes.",
-      "answers": [
-        { "questionId": 1, "rating": 5 }, { "questionId": 2, "rating": 5 },
-        { "questionId": 3, "rating": 4 }, { "questionId": 4, "rating": 5 },
-        { "questionId": 5, "rating": 4 }, { "questionId": 6, "rating": 5 },
-        { "questionId": 7, "rating": 5 }, { "questionId": 8, "rating": 4 }
-      ]
     }
   ]
 }
 
 ### Resume or create the same submission
-POST {{baseUrl}}/surveys/1/departments/1/submission
+POST {{baseUrl}}/surveys/1/departments/7/submission
 Content-Type: application/json
 
 {

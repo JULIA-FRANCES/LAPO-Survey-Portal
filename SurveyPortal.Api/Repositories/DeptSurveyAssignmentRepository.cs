@@ -22,4 +22,10 @@ public class DeptSurveyAssignmentRepository(SurveyPortalContext dbContext) : IDe
             a.SurveyId == surveyId &&
             a.RaterDepartmentId == raterDepartmentId &&
             a.RatedDepartmentId == ratedDepartmentId);
+
+    public async Task AddRangeAsync(List<DeptSurveyAssignment> newAssignments)
+    {
+        dbContext.DeptSurveyAssignments.AddRange(newAssignments);
+        await dbContext.SaveChangesAsync();
+    }
 }

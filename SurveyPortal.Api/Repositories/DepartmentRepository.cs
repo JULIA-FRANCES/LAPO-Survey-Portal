@@ -11,6 +11,10 @@ public class DepartmentRepository(SurveyPortalContext dbContext) : IDepartmentRe
     public Task<List<DepartmentDto>> GetAllAsync(int surveyId, int raterId) =>
     dbContext.Departments
         .AsNoTracking()
+        .Where(department => department.Id != dbContext.Users
+            .Where(user => user.Id == raterId)
+            .Select(user => user.Unit!.DepartmentId)
+            .FirstOrDefault())
         .OrderBy(department => department.Name)
         .Select(department => new DepartmentDto(
             department.Id,
@@ -24,6 +28,8 @@ public class DepartmentRepository(SurveyPortalContext dbContext) : IDepartmentRe
         ))
         .ToListAsync();
 
+    public Task<List<Department>> GetAllEntitiesAsync() =>
+        dbContext.Departments.AsNoTracking().ToListAsync();
 
     public Task<DepartmentDetailDto?> GetDetailAsync(int departmentId, int surveyId, int raterId) =>
         dbContext.Departments

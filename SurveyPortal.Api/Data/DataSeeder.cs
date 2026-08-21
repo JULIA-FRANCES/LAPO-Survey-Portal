@@ -11,6 +11,36 @@ public static class DataSeeder
 
         if (db.Departments.Any())
         {
+            var departments = db.Departments.ToList();
+            var existingAssignments = db.DeptSurveyAssignments.ToList();
+
+            foreach (var existingSurvey in db.Surveys.ToList())
+            {
+                foreach (var rater in departments)
+                {
+                    foreach (var rated in departments.Where(department => department.Id != rater.Id))
+                    {
+                        if (existingAssignments.Any(assignment =>
+                            assignment.SurveyId == existingSurvey.Id &&
+                            assignment.RaterDepartmentId == rater.Id &&
+                            assignment.RatedDepartmentId == rated.Id))
+                        {
+                            continue;
+                        }
+
+                        var assignment = new DeptSurveyAssignment
+                        {
+                            SurveyId = existingSurvey.Id,
+                            RaterDepartmentId = rater.Id,
+                            RatedDepartmentId = rated.Id
+                        };
+                        db.DeptSurveyAssignments.Add(assignment);
+                        existingAssignments.Add(assignment);
+                    }
+                }
+            }
+
+            db.SaveChanges();
             return; // already seeded
         }
 
@@ -119,11 +149,18 @@ public static class DataSeeder
 
         db.SaveChanges();
 
-        // Each department rates the other in this survey.
-        db.DeptSurveyAssignments.AddRange(
-            new DeptSurveyAssignment { SurveyId = survey.Id, RaterDepartmentId = finance.Id, RatedDepartmentId = risk.Id },
-            new DeptSurveyAssignment { SurveyId = survey.Id, RaterDepartmentId = risk.Id, RatedDepartmentId = finance.Id }
-        );
+        foreach (var rater in db.Departments.Local)
+        {
+            foreach (var rated in db.Departments.Local.Where(department => department.Id != rater.Id))
+            {
+                db.DeptSurveyAssignments.Add(new DeptSurveyAssignment
+                {
+                    SurveyId = survey.Id,
+                    RaterDepartmentId = rater.Id,
+                    RatedDepartmentId = rated.Id
+                });
+            }
+        }
 
         db.Users.Add(new User
         {

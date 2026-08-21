@@ -7,6 +7,8 @@ public interface IDepartmentRepository
 {
     Task<List<DepartmentDto>> GetAllAsync(int surveyId, int raterId);
 
+    Task<List<Department>> GetAllEntitiesAsync();
+
     // This one returns a DTO instead of a model: the "is this unit completed"
     // flag is computed per-rater and doesn't belong on the Department entity,
     // so there's no plain model this query could return instead.

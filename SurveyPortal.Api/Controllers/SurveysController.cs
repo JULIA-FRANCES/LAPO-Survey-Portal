@@ -11,6 +11,7 @@ public class SurveysController(
     ISurveyRepository surveys,
     IQuestionRepository questions,
     IDeptSurveyAssignmentRepository assignments,
+    IDepartmentRepository departments,
     IUserRepository users,
     ISubmissionRepository submissions) : ControllerBase
 {
@@ -36,6 +37,20 @@ public class SurveysController(
         };
 
         await surveys.AddAsync(survey);
+
+        var allDepartments = await departments.GetAllEntitiesAsync();
+        var newAssignments = allDepartments
+            .SelectMany(rater => allDepartments
+                .Where(rated => rated.Id != rater.Id)
+                .Select(rated => new DeptSurveyAssignment
+                {
+                    SurveyId = survey.Id,
+                    RaterDepartmentId = rater.Id,
+                    RatedDepartmentId = rated.Id
+                }))
+            .ToList();
+
+        await assignments.AddRangeAsync(newAssignments);
 
         return CreatedAtAction(nameof(GetById), new { id = survey.Id }, ToDto(survey));
     }
