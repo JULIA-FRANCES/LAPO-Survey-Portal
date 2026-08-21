@@ -62,15 +62,6 @@ public class SurveysController(
         return survey is null ? NotFound() : Ok(ToDto(survey));
     }
 
-    // Departments in scope for a rater department: distinct rated departments
-    // assigned to it for this survey.
-    [HttpGet("{surveyId:int}/departments")]
-    public async Task<ActionResult<List<DepartmentDto>>> GetDepartmentsInScope(int surveyId, int raterDepartmentId)
-    {
-        var rated = await assignments.GetRatedDepartmentsAsync(surveyId, raterDepartmentId);
-        return Ok(rated.Select(d => new DepartmentDto(d.Id, d.Name, d.Units.Count)).ToList());
-    }
-
     // Raters only ever see published questions. Pass includeInactive=true for
     // an admin/management view that also shows drafts not yet visible to raters.
     [HttpGet("{surveyId:int}/questions")]

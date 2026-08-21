@@ -1,41 +1,114 @@
 
-### List all departments
-GET http://localhost:5046/departments
+@baseUrl = http://localhost:5046
 
-###
+# Seeded data on a fresh database:
+# surveyId: 1 (Q3 2026), raterId: 1 (Oluwaseun Adeyemi, Finance)
+# Finance is assigned to rate Enterprise Risk Management (departmentId: 1).
+# Enterprise Risk Management unit IDs: 1 (BCMS Manager), 2 (Internal Control), 3 (Risk Management).
+# Seeded question IDs: 1 through 8.
 
-### List all questions
-GET http://localhost:5046/questions
+### List surveys
+GET {{baseUrl}}/surveys
 
-###
+### Get the active survey
+GET {{baseUrl}}/surveys/active
 
-### Get the active evaluation cycle
-GET http://localhost:5046/evaluation-cycles/active
+### Get a survey by ID
+GET {{baseUrl}}/surveys/1
 
-### Submit a rating 
-POST http://localhost:5046/submissions
+### Create a survey
+POST {{baseUrl}}/surveys
 Content-Type: application/json
 
 {
-  "evaluationCycleId": 1,
+  "name": "Q4 2026 Department Survey",
+  "startDate": "2026-10-01",
+  "endDate": "2026-10-31"
+}
+
+### List active questions for the seeded survey
+GET {{baseUrl}}/surveys/1/questions
+
+### Add a draft question to the seeded survey
+POST {{baseUrl}}/surveys/1/questions
+Content-Type: application/json
+
+{
+  "text": "How clear are this department's escalation procedures?",
+  "sortOrder": 9,
+  "isActive": false
+}
+
+### Publish the question created above (ID 9 on a fresh database)
+PATCH {{baseUrl}}/surveys/1/questions/9/active
+Content-Type: application/json
+
+{
+  "isActive": true
+}
+
+### Include draft questions as well
+GET {{baseUrl}}/surveys/1/questions?includeInactive=true
+
+### Departments and completion status for the seeded rater
+GET {{baseUrl}}/departments?surveyId=1&raterId=1
+
+### Enterprise Risk Management, including unit completion status
+GET {{baseUrl}}/departments/1?surveyId=1&raterId=1
+
+### Submit a complete rating for Enterprise Risk Management
+# Run this once on a fresh database. Re-running returns 409 because a submission already exists.
+POST {{baseUrl}}/submissions
+Content-Type: application/json
+
+{
+  "surveyId": 1,
+  "raterId": 1,
+  "departmentId": 1,
   "unitRatings": [
     {
       "unitId": 1,
-      "favourableFeedback": "Great communication",
-      "correctiveFeedback": "Could be faster",
-      "answers": [ { "questionId": 1, "score": 4 }, { "questionId": 2, "score": 5 } ]
+      "favourableFeedback": "The BCMS Manager communicates requirements clearly and promptly.",
+      "correctiveFeedback": "Share review timelines earlier in the quarter.",
+      "answers": [
+        { "questionId": 1, "rating": 5 }, { "questionId": 2, "rating": 4 },
+        { "questionId": 3, "rating": 5 }, { "questionId": 4, "rating": 4 },
+        { "questionId": 5, "rating": 5 }, { "questionId": 6, "rating": 4 },
+        { "questionId": 7, "rating": 4 }, { "questionId": 8, "rating": 5 }
+      ]
     },
     {
       "unitId": 2,
-      "favourableFeedback": "Very organized",
-      "correctiveFeedback": "Nothing to add",
-      "answers": [ { "questionId": 1, "score": 5 }, { "questionId": 2, "score": 4 } ]
+      "favourableFeedback": "Internal Control provides practical and well-documented guidance.",
+      "correctiveFeedback": "Provide a single tracker for open action items.",
+      "answers": [
+        { "questionId": 1, "rating": 4 }, { "questionId": 2, "rating": 4 },
+        { "questionId": 3, "rating": 5 }, { "questionId": 4, "rating": 5 },
+        { "questionId": 5, "rating": 4 }, { "questionId": 6, "rating": 5 },
+        { "questionId": 7, "rating": 4 }, { "questionId": 8, "rating": 4 }
+      ]
+    },
+    {
+      "unitId": 3,
+      "favourableFeedback": "Risk Management gives timely support during operational reviews.",
+      "correctiveFeedback": "Offer more short training sessions for new processes.",
+      "answers": [
+        { "questionId": 1, "rating": 5 }, { "questionId": 2, "rating": 5 },
+        { "questionId": 3, "rating": 4 }, { "questionId": 4, "rating": 5 },
+        { "questionId": 5, "rating": 4 }, { "questionId": 6, "rating": 5 },
+        { "questionId": 7, "rating": 5 }, { "questionId": 8, "rating": 4 }
+      ]
     }
   ]
 }
 
-### View all submissions
-GET http://localhost:5046/submissions
+### Resume or create the same submission
+POST {{baseUrl}}/surveys/1/departments/1/submission
+Content-Type: application/json
 
-### Get one department's detail, with per-unit completion status
-GET http://localhost:5046/departments/1?evaluationCycleId=1
+{
+  "raterId": 1
+}
+
+### View submitted ratings
+GET {{baseUrl}}/submissions
