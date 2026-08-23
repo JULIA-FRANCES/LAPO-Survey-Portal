@@ -4,3 +4,4 @@
 **/obj
 **/*.db
 **/*.user
+SurveyPortal.Api/appsettings.Local.json

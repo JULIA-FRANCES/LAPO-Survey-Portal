@@ -8,8 +8,9 @@ public static class DataExtensions
     public static void AddSurveyPortalDb(this WebApplicationBuilder builder)
     {
         var connString = builder.Configuration.GetConnectionString("SurveyPortalDb")
-            ?? "Data Source=SurveyPortal.db";
-        builder.Services.AddSqlite<SurveyPortalContext>(connString);
+            ?? throw new InvalidOperationException("Connection string 'SurveyPortalDb' is not configured.");
+        builder.Services.AddDbContext<SurveyPortalContext>(options =>
+            options.UseMySql(connString, new MySqlServerVersion(new Version(8, 0, 0))));
     }
 
     public static void MigrateDb(this WebApplication app)

@@ -91,7 +91,11 @@ public class SubmissionsController(
             s.Id,
             s.SurveyId,
             s.RaterId,
+            s.Rater.Name,
+            s.Rater.Unit!.Name,
+            s.Rater.Unit!.Department!.Name,
             s.DepartmentId,
+            s.Department!.Name,
             s.CreatedAt,
             s.SubmittedAt,
             s.UnitFeedback.Select(f => new UnitRatingDto(

@@ -72,6 +72,12 @@ public class SurveyPortalContext(DbContextOptions<SurveyPortalContext> options) 
         modelBuilder.Entity<Answer>()
             .ToTable(t => t.HasCheckConstraint("CK_Answer_Rating", "Rating BETWEEN 1 AND 5"));
 
+        modelBuilder.Entity<Answer>()
+            .HasOne(a => a.Question)
+            .WithMany()
+            .HasForeignKey(a => a.QuestionId)
+            .OnDelete(DeleteBehavior.NoAction);
+
         modelBuilder.Entity<UnitFeedback>()
             .HasIndex(f => new { f.SubmissionId, f.UnitId })
             .IsUnique();

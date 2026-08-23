@@ -69,6 +69,19 @@ public class SurveysController(
         return survey is null ? NotFound() : Ok(ToDto(survey));
     }
 
+    [HttpGet("{id:int}/departments")]
+    public async Task<ActionResult<List<SurveyDepartmentRatingDto>>> GetDepartments(int id)
+    {
+        var survey = await surveys.GetByIdAsync(id);
+        if (survey is null)
+        {
+            return NotFound();
+        }
+
+        var departmentRatings = await submissions.GetDepartmentSurveysAsync(id);
+        return Ok(departmentRatings);
+    }
+
     [HttpGet("active")]
     public async Task<IActionResult> GetActive()
     {

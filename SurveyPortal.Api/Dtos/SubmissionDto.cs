@@ -13,7 +13,11 @@ public record SubmissionDto(
     int Id,
     int SurveyId,
     int RaterId,
+    string RaterName,
+    string RaterUnitName,
+    string RaterDepartmentName,
     int DepartmentId,
+    string DepartmentName,
     DateTime CreatedAt,
     DateTime? SubmittedAt,
     List<UnitRatingDto> UnitRatings);

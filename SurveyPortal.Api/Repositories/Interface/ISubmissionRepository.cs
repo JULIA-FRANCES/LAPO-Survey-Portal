@@ -1,3 +1,4 @@
+using SurveyPortal.Api.Dtos;
 using SurveyPortal.Api.Models;
 
 namespace SurveyPortal.Api.Repositories.Interface;
@@ -14,4 +15,6 @@ public interface ISubmissionRepository
     Task AddAsync(Submission submission);
 
     Task<List<Submission>> GetAllWithDetailsAsync();
+
+    Task<List<SurveyDepartmentRatingDto>> GetDepartmentSurveysAsync(int surveyId);
 }
