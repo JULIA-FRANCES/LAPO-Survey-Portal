@@ -17,4 +17,6 @@ public interface ISubmissionRepository
     Task<List<Submission>> GetAllWithDetailsAsync();
 
     Task<List<SurveyDepartmentRatingDto>> GetDepartmentSurveysAsync(int surveyId);
+
+    Task<List<SurveyMetricsDto>> GetSurveyMetricsAsync();
 }

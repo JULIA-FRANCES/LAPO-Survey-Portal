@@ -108,4 +108,19 @@ public class SubmissionRepository(SurveyPortalContext dbContext) : ISubmissionRe
                     )
             .ToList();
     }
+
+    public Task<List<SurveyMetricsDto>> GetSurveyMetricsAsync() =>
+        dbContext.Surveys
+            .AsNoTracking()
+            .Select(survey => new SurveyMetricsDto(
+                survey.Id,
+                dbContext.Submissions.Count(submission =>
+                    submission.SurveyId == survey.Id &&
+                    submission.SubmittedAt != null),
+                dbContext.Answers
+                    .Where(answer =>
+                        answer.Submission!.SurveyId == survey.Id &&
+                        answer.Submission.SubmittedAt != null)
+                    .Average(answer => (double?)answer.Rating)))
+            .ToListAsync();
 }

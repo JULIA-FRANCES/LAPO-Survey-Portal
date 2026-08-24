@@ -62,6 +62,32 @@ public class SurveysController(
         return Ok(all.Select(ToDto).ToList());
     }
 
+    [HttpGet("admin")]
+    public async Task<ActionResult<List<AdminSurveyDto>>> GetAllForAdmin()
+    {
+        var all = await surveys.GetAllAsync();
+        var metrics = await submissions.GetSurveyMetricsAsync();
+        var metricsBySurveyId = metrics.ToDictionary(metric => metric.SurveyId);
+
+        var result = all
+            .Select(survey =>
+            {
+                metricsBySurveyId.TryGetValue(survey.Id, out var metric);
+
+                return new AdminSurveyDto(
+                    survey.Id,
+                    survey.Name,
+                    survey.StartDate,
+                    survey.EndDate,
+                    metric?.ResponseCount ?? 0,
+                    metric?.AverageRating,
+                    ComputeStatus(survey));
+            })
+            .ToList();
+
+        return Ok(result);
+    }
+
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id)
     {
