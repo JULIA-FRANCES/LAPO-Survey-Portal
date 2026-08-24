@@ -88,23 +88,23 @@ public class SurveysController(
         return Ok(result);
     }
 
-    [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetById(int id)
+    [HttpGet("{surveyId:int}")]
+    public async Task<IActionResult> GetById(int surveyId)
     {
-        var survey = await surveys.GetByIdAsync(id);
+        var survey = await surveys.GetByIdAsync(surveyId);
         return survey is null ? NotFound() : Ok(ToDto(survey));
     }
 
-    [HttpGet("{id:int}/departments")]
-    public async Task<ActionResult<List<SurveyDepartmentRatingDto>>> GetDepartments(int id)
+    [HttpGet("{surveyId:int}/departments")]
+    public async Task<ActionResult<List<SurveyDepartmentRatingDto>>> GetDepartments(int surveyId)
     {
-        var survey = await surveys.GetByIdAsync(id);
+        var survey = await surveys.GetByIdAsync(surveyId);
         if (survey is null)
         {
             return NotFound();
         }
 
-        var departmentRatings = await submissions.GetDepartmentSurveysAsync(id);
+        var departmentRatings = await submissions.GetDepartmentSurveysAsync(surveyId);
         return Ok(departmentRatings);
     }
 
