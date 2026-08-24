@@ -211,4 +211,18 @@ public class SurveysController(
 
         return Ok(response);
     }
+
+    [HttpPut("{surveyId:int}/assignments")]
+    public async Task<IActionResult> ReplaceAssignments(int surveyId, List<DeptSurveyAssignment> newAssignments)
+    {
+        var survey = await surveys.GetByIdAsync(surveyId);
+        if (survey is null)
+        {
+            return NotFound();
+        }
+
+        await assignments.ReplaceAsync(surveyId, newAssignments);
+
+        return NoContent();
+    }
 }
