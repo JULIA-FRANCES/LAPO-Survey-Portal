@@ -180,4 +180,35 @@ public class SurveysController(
 
         return Ok(dto);
     }
+
+    [HttpGet("{surveyId:int}/assignments")]
+    public async Task<IActionResult> GetAssignmentsBySurvey(int surveyId)
+    {
+        var survey = await surveys.GetByIdAsync(surveyId);
+        if (survey is null)
+        {
+            return NotFound();
+        }
+
+        var allDepartments = await departments.GetAllEntitiesAsync();
+        var assignmentsForSurvey = await assignments.GetBySurveyAsync(surveyId);
+
+        var response = allDepartments
+            .OrderBy(department => department.Name)
+            .Select(department => new DepartmentAssignmentsDto(
+                department.Id,
+                department.Name,
+                allDepartments
+                    .Where(assignedDepartment => assignmentsForSurvey.Any(assignment =>
+                        assignment.RaterDepartmentId == department.Id &&
+                        assignment.RatedDepartmentId == assignedDepartment.Id))
+                    .OrderBy(assignedDepartment => assignedDepartment.Name)
+                    .Select(assignedDepartment => new AssignedDepartmentDto(
+                        assignedDepartment.Id,
+                        assignedDepartment.Name))
+                    .ToList()))
+            .ToList();
+
+        return Ok(response);
+    }
 }

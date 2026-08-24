@@ -9,4 +9,7 @@ public interface IDeptSurveyAssignmentRepository
     Task<List<Department>> GetRatedDepartmentsAsync(int surveyId, int raterDepartmentId);
     Task<bool> IsAssignedAsync(int surveyId, int raterDepartmentId, int ratedDepartmentId);
     Task AddRangeAsync(List<DeptSurveyAssignment> newAssignments);
+
+    Task<List<DeptSurveyAssignment>> GetBySurveyAsync(int surveyId);
+    Task ReplaceAsync(int surveyId, List<DeptSurveyAssignment> newAssignments);
 }

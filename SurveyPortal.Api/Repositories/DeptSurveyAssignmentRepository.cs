@@ -28,4 +28,23 @@ public class DeptSurveyAssignmentRepository(SurveyPortalContext dbContext) : IDe
         dbContext.DeptSurveyAssignments.AddRange(newAssignments);
         await dbContext.SaveChangesAsync();
     }
+
+    public Task<List<DeptSurveyAssignment>> GetBySurveyAsync(int surveyId) =>
+        dbContext.DeptSurveyAssignments
+            .Where(a => a.SurveyId == surveyId)
+            .Include(a => a.RaterDepartment!)
+            .AsNoTracking()
+            .ToListAsync();
+
+    public async Task ReplaceAsync(int surveyId, List<DeptSurveyAssignment> newAssignments)
+    {
+        var currentAssignments = await dbContext.DeptSurveyAssignments
+        .Where(a => a.SurveyId == surveyId)
+        .ToListAsync();
+
+
+        dbContext.DeptSurveyAssignments.RemoveRange(currentAssignments);
+        dbContext.DeptSurveyAssignments.AddRange(newAssignments);
+        await dbContext.SaveChangesAsync();
+    }
 }
