@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SurveyPortal.Api.Data;
+using SurveyPortal.Api.Dtos;
 using SurveyPortal.Api.Models;
 using SurveyPortal.Api.Repositories.Interface;
 
@@ -21,5 +22,21 @@ public class SurveyRepository(SurveyPortalContext dbContext) : ISurveyRepository
     {
         dbContext.Surveys.Add(survey);
         await dbContext.SaveChangesAsync();
+    }
+
+    public async Task<Survey?> UpdateAsync(int id, CreateSurveyDto survey)
+    {
+        var existingSurvey = await dbContext.Surveys.FindAsync(id);
+        if (existingSurvey is null)
+        {
+            return null;
+        }
+
+        existingSurvey.Name = survey.Name;
+        existingSurvey.StartDate = survey.StartDate;
+        existingSurvey.EndDate = survey.EndDate;
+
+        await dbContext.SaveChangesAsync();
+        return existingSurvey;
     }
 }

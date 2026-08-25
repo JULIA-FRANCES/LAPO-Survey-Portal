@@ -43,6 +43,21 @@ public class QuestionRepository(SurveyPortalContext dbContext) : IQuestionReposi
         return question;
     }
 
+    public async Task<Question?> SetSortOrderAsync(int surveyId, int questionId, int sortOrder)
+    {
+        var question = await dbContext.Questions
+            .FirstOrDefaultAsync(q => q.Id == questionId && q.SurveyId == surveyId);
+
+        if (question is null)
+        {
+            return null;
+        }
+
+        question.SortOrder = sortOrder;
+        await dbContext.SaveChangesAsync();
+        return question;
+    }
+
     public async Task<DeleteQuestionResult> DeleteAsync(int surveyId, int questionId)
     {
         var question = await dbContext.Questions

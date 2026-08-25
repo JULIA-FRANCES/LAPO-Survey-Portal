@@ -95,6 +95,13 @@ public class SurveysController(
         return survey is null ? NotFound() : Ok(ToDto(survey));
     }
 
+    [HttpPut("{surveyId:int}")]
+    public async Task<IActionResult> Update(int surveyId, CreateSurveyDto updatedSurvey)
+    {
+        var survey = await surveys.UpdateAsync(surveyId, updatedSurvey);
+        return survey is null ? NotFound() : Ok(ToDto(survey));
+    }
+
     [HttpGet("{surveyId:int}/departments")]
     public async Task<ActionResult<List<SurveyDepartmentRatingDto>>> GetDepartments(int surveyId)
     {
@@ -156,6 +163,21 @@ public class SurveysController(
     public async Task<IActionResult> SetQuestionActive(int surveyId, int questionId, SetQuestionActiveDto request)
     {
         var question = await questions.SetActiveAsync(surveyId, questionId, request.IsActive);
+        if (question is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(new QuestionDto(question.Id, question.Text, question.SortOrder, question.IsActive));
+    }
+
+    [HttpPatch("{surveyId:int}/questions/{questionId:int}/sort-order")]
+    public async Task<IActionResult> SetQuestionSortOrder(
+        int surveyId,
+        int questionId,
+        SetQuestionSortOrderDto request)
+    {
+        var question = await questions.SetSortOrderAsync(surveyId, questionId, request.SortOrder);
         if (question is null)
         {
             return NotFound();

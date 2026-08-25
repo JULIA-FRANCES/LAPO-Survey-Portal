@@ -16,5 +16,6 @@ public interface IQuestionRepository
     Task<int?> GetMaxSortOrderAsync(int surveyId);
     Task AddAsync(Question question);
     Task<Question?> SetActiveAsync(int surveyId, int questionId, bool isActive);
+    Task<Question?> SetSortOrderAsync(int surveyId, int questionId, int sortOrder);
     Task<DeleteQuestionResult> DeleteAsync(int surveyId, int questionId);
 }
