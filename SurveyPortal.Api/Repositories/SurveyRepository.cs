@@ -14,9 +14,10 @@ public class SurveyRepository(SurveyPortalContext dbContext) : ISurveyRepository
     public Task<List<Survey>> GetAllAsync() =>
         dbContext.Surveys.AsNoTracking().OrderByDescending(s => s.StartDate).ToListAsync();
 
-    public Task<Survey?> GetActiveAsync(DateOnly today) =>
+    public Task<List<Survey>> GetActiveAsync(DateOnly today) =>
         dbContext.Surveys.AsNoTracking()
-            .FirstOrDefaultAsync(s => today >= s.StartDate && today <= s.EndDate);
+            .Where(s => today >= s.StartDate && today <= s.EndDate)
+            .ToListAsync();
 
     public async Task AddAsync(Survey survey)
     {

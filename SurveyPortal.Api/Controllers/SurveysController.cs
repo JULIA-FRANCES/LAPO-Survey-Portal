@@ -95,6 +95,25 @@ public class SurveysController(
         return survey is null ? NotFound() : Ok(ToDto(survey));
     }
 
+    [HttpGet("{surveyId:int}/overview")]
+    public async Task<IActionResult> GetOverview(int surveyId)
+    {
+        var survey = await surveys.GetByIdAsync(surveyId);
+        if (survey is null)
+        {
+            return NotFound();
+        }
+
+        var metric = (await submissions.GetSurveyMetricsAsync())
+            .First(metric => metric.SurveyId == surveyId);
+
+        return Ok(new SurveyOverviewDto(
+            metric.SurveyId,
+            metric.ResponseCount,
+            metric.AverageRating,
+            ComputeStatus(survey)));
+    }
+
     [HttpPut("{surveyId:int}")]
     public async Task<IActionResult> Update(int surveyId, CreateSurveyDto updatedSurvey)
     {
@@ -116,11 +135,11 @@ public class SurveysController(
     }
 
     [HttpGet("active")]
-    public async Task<IActionResult> GetActive()
+    public async Task<ActionResult<List<SurveyDto>>> GetActive()
     {
         var today = DateOnly.FromDateTime(DateTime.Today);
         var survey = await surveys.GetActiveAsync(today);
-        return survey is null ? NotFound() : Ok(ToDto(survey));
+        return Ok(survey.Select(ToDto).ToList());
     }
 
     // Raters only ever see published questions. Pass includeInactive=true for

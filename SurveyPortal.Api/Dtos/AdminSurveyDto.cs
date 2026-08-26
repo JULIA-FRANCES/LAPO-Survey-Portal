@@ -13,3 +13,9 @@ public record SurveyMetricsDto(
     int SurveyId,
     int ResponseCount,
     double? AverageRating);
+
+public record SurveyOverviewDto(
+    int SurveyId,
+    int ResponseCount,
+    double? AverageRating,
+    string Status);

@@ -7,7 +7,7 @@ public interface ISurveyRepository
 {
     Task<Survey?> GetByIdAsync(int id);
     Task<List<Survey>> GetAllAsync();
-    Task<Survey?> GetActiveAsync(DateOnly today);
+    Task<List<Survey>> GetActiveAsync(DateOnly today);
     Task AddAsync(Survey survey);
     Task<Survey?> UpdateAsync(int id, CreateSurveyDto survey);
 }
