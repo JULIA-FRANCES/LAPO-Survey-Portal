@@ -52,7 +52,7 @@ public class SurveysController(
 
         await assignments.AddRangeAsync(newAssignments);
 
-        return CreatedAtAction(nameof(GetById), new { id = survey.Id }, ToDto(survey));
+        return CreatedAtAction(nameof(GetById), new { surveyId = survey.Id }, ToDto(survey));
     }
 
     [HttpGet]
