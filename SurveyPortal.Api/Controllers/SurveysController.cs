@@ -288,6 +288,12 @@ public class SurveysController(
             return NotFound();
         }
 
+        foreach (var assignment in newAssignments)
+        {
+            assignment.Id = 0;
+            assignment.SurveyId = surveyId;
+        }
+
         await assignments.ReplaceAsync(surveyId, newAssignments);
 
         return NoContent();
