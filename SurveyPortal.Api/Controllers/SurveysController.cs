@@ -280,7 +280,7 @@ public class SurveysController(
     }
 
     [HttpPut("{surveyId:int}/assignments")]
-    public async Task<IActionResult> ReplaceAssignments(int surveyId, List<DeptSurveyAssignment> newAssignments)
+    public async Task<IActionResult> ReplaceAssignments(int surveyId, List<UpdateAssignmentDto> newAssignments)
     {
         var survey = await surveys.GetByIdAsync(surveyId);
         if (survey is null)
@@ -288,13 +288,37 @@ public class SurveysController(
             return NotFound();
         }
 
-        foreach (var assignment in newAssignments)
+        var validDepartmentIds = (await departments.GetAllEntitiesAsync())
+            .Select(department => department.Id)
+            .ToHashSet();
+
+        var unknownDepartmentIds = newAssignments
+            .SelectMany(assignment => new[] { assignment.RaterDepartmentId, assignment.RatedDepartmentId })
+            .Where(id => !validDepartmentIds.Contains(id))
+            .Distinct()
+            .ToList();
+
+        if (unknownDepartmentIds.Count > 0)
         {
-            assignment.Id = 0;
-            assignment.SurveyId = surveyId;
+            return BadRequest($"Unknown department id(s): {string.Join(", ", unknownDepartmentIds)}.");
         }
 
-        await assignments.ReplaceAsync(surveyId, newAssignments);
+        if (newAssignments.Any(assignment => assignment.RaterDepartmentId == assignment.RatedDepartmentId))
+        {
+            return BadRequest("A department cannot be assigned to rate itself.");
+        }
+
+        var deduplicatedAssignments = newAssignments
+            .DistinctBy(assignment => (assignment.RaterDepartmentId, assignment.RatedDepartmentId))
+            .Select(assignment => new DeptSurveyAssignment
+            {
+                SurveyId = surveyId,
+                RaterDepartmentId = assignment.RaterDepartmentId,
+                RatedDepartmentId = assignment.RatedDepartmentId
+            })
+            .ToList();
+
+        await assignments.ReplaceAsync(surveyId, deduplicatedAssignments);
 
         return NoContent();
     }

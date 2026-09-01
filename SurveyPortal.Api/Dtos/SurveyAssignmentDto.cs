@@ -8,3 +8,7 @@ public record DepartmentAssignmentsDto(
     int DepartmentId,
     string DepartmentName,
     List<AssignedDepartmentDto> Assignment);
+
+public record UpdateAssignmentDto(
+    int RaterDepartmentId,
+    int RatedDepartmentId);
